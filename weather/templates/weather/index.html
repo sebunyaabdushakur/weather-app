@@ -1,0 +1,282 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f4f7fb">
+    <title>Atmos | Weather Forecast</title>
+    <link rel="stylesheet" href="{% static 'weather/style.css' %}">
+</head>
+<body>
+    <!-- Reusable weather icons -->
+    <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <symbol id="icon-sun" viewBox="0 0 24 24">
+            <circle cx="12" cy="12" r="4"></circle>
+            <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"></path>
+        </symbol>
+        <symbol id="icon-cloud-sun" viewBox="0 0 24 24">
+            <path d="M12 2v2m-6.36.64 1.42 1.42M3 11h2"></path>
+            <path d="M5 16a4 4 0 0 1 4-4 5 5 0 0 1 9.7 1.5A3.5 3.5 0 1 1 18 20H9a4 4 0 0 1-4-4Z"></path>
+        </symbol>
+        <symbol id="icon-cloud" viewBox="0 0 24 24">
+            <path d="M7 18a4 4 0 1 1 .8-7.92A6 6 0 0 1 19 12a3 3 0 1 1 0 6Z"></path>
+        </symbol>
+        <symbol id="icon-cloud-rain" viewBox="0 0 24 24">
+            <path d="M7 15a4 4 0 1 1 .8-7.92A6 6 0 0 1 19 9a3 3 0 1 1 0 6Z"></path>
+            <path d="m9 19-1 2m6-2-1 2m6-2-1 2"></path>
+        </symbol>
+        <symbol id="icon-wind" viewBox="0 0 24 24">
+            <path d="M3 8h12a3 3 0 1 0-3-3"></path>
+            <path d="M2 12h17a3 3 0 1 1-3 3"></path>
+            <path d="M4 16h5a2 2 0 1 1-2 2"></path>
+        </symbol>
+        <symbol id="icon-drop" viewBox="0 0 24 24">
+            <path d="M12 2.5S5 10 5 15a7 7 0 0 0 14 0c0-5-7-12.5-7-12.5Z"></path>
+            <path d="M9 16a3 3 0 0 0 3 3"></path>
+        </symbol>
+        <symbol id="icon-search" viewBox="0 0 24 24">
+            <circle cx="11" cy="11" r="7"></circle>
+            <path d="m20 20-4-4"></path>
+        </symbol>
+        <symbol id="icon-pin" viewBox="0 0 24 24">
+            <path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path>
+            <circle cx="12" cy="10" r="2.5"></circle>
+        </symbol>
+    </svg>
+
+    <header class="topbar">
+        <a class="brand" href="/" aria-label="Atmos home">
+            <span class="brand-mark">
+                <svg class="icon"><use href="#icon-cloud-sun"></use></svg>
+            </span>
+            <span>atmos<span class="brand-period">.</span></span>
+        </a>
+
+        <nav class="top-nav" aria-label="Main navigation">
+            <a class="nav-link active" href="#today">Today</a>
+            <a class="nav-link" href="#hourly">Hourly</a>
+            <a class="nav-link" href="#week">7-day forecast</a>
+        </nav>
+
+        <span class="unit-chip" aria-label="Temperature units">
+            <span class="unit-active">°C</span>
+            <span class="unit-divider"></span>
+            <span>°F</span>
+        </span>
+    </header>
+
+    <main class="page-shell">
+        <section class="welcome-row">
+            <div>
+                <p class="eyebrow">YOUR WEATHER, BEAUTIFULLY CLEAR</p>
+                <h1>Forecast for wherever you are.</h1>
+            </div>
+
+            <form class="search-form" id="search-form">
+                <svg class="icon search-icon"><use href="#icon-search"></use></svg>
+                <label class="visually-hidden" for="city">Search for a city</label>
+                <input
+                    id="city"
+                    name="city"
+                    type="search"
+                    placeholder="Search city..."
+                    value="Nairobi"
+                    autocomplete="off"
+                >
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <p class="status-message" id="status" aria-live="polite">
+            Showing sample weather. Search for a city when live weather is connected.
+        </p>
+
+        <section class="dashboard-grid" id="today">
+            <article class="current-card">
+                <div class="current-card-content">
+                    <div class="location-line">
+                        <svg class="icon location-icon"><use href="#icon-pin"></use></svg>
+                        <span id="city-name">Nairobi, Kenya</span>
+                    </div>
+
+                    <p class="current-date" id="current-date">Tuesday, October 7</p>
+
+                    <div class="temperature-row">
+                        <span class="temperature" id="temperature">22°</span>
+                        <div class="condition-block">
+                            <svg class="hero-weather-icon"><use href="#icon-cloud-sun"></use></svg>
+                            <span id="condition">Partly cloudy</span>
+                        </div>
+                    </div>
+
+                    <p class="high-low" id="high-low">H: 25° <span>·</span> L: 17°</p>
+                </div>
+
+                <div class="sun-art" aria-hidden="true">
+                    <span class="sun-halo"></span>
+                    <span class="sun-disc"></span>
+                    <span class="cloud-shape cloud-back"></span>
+                    <span class="cloud-shape cloud-front"></span>
+                </div>
+
+                <div class="card-footer">
+                    <span>Feels like <strong id="feels-like">24°</strong></span>
+                    <span class="footer-divider"></span>
+                    <span>Updated just now</span>
+                </div>
+            </article>
+
+            <section class="metrics-grid" aria-label="Weather details">
+                <article class="metric-card">
+                    <div class="metric-heading">
+                        <span class="metric-icon humidity-icon">
+                            <svg class="icon"><use href="#icon-drop"></use></svg>
+                        </span>
+                        <span>Humidity</span>
+                    </div>
+                    <strong class="metric-value" id="humidity">64%</strong>
+                    <span class="metric-note">Comfortable</span>
+                </article>
+
+                <article class="metric-card">
+                    <div class="metric-heading">
+                        <span class="metric-icon wind-icon">
+                            <svg class="icon"><use href="#icon-wind"></use></svg>
+                        </span>
+                        <span>Wind</span>
+                    </div>
+                    <strong class="metric-value" id="wind">12 <small>km/h</small></strong>
+                    <span class="metric-note">Light breeze</span>
+                </article>
+
+                <article class="metric-card">
+                    <div class="metric-heading">
+                        <span class="metric-icon rain-icon">
+                            <svg class="icon"><use href="#icon-drop"></use></svg>
+                        </span>
+                        <span>Precipitation</span>
+                    </div>
+                    <strong class="metric-value" id="precipitation">10%</strong>
+                    <span class="metric-note">Chance of rain</span>
+                </article>
+
+                <article class="metric-card">
+                    <div class="metric-heading">
+                        <span class="metric-icon sun-icon">
+                            <svg class="icon"><use href="#icon-sun"></use></svg>
+                        </span>
+                        <span>UV index</span>
+                    </div>
+                    <strong class="metric-value" id="uv-index">Moderate</strong>
+                    <span class="metric-note">Index 4 of 11</span>
+                </article>
+            </section>
+        </section>
+
+        <section class="forecast-card" id="hourly">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">PLAN YOUR DAY</p>
+                    <h2>Hourly forecast</h2>
+                </div>
+                <span class="section-caption">Next 24 hours</span>
+            </div>
+
+            <div class="hourly-list" id="hourly-details">
+                <article class="hour-item">
+                    <span class="hour-time">Now</span>
+                    <svg class="forecast-icon partly-cloudy"><use href="#icon-cloud-sun"></use></svg>
+                    <strong>22°</strong>
+                    <span class="hour-rain">10%</span>
+                </article>
+                <article class="hour-item">
+                    <span class="hour-time">14:00</span>
+                    <svg class="forecast-icon sunny"><use href="#icon-sun"></use></svg>
+                    <strong>24°</strong>
+                    <span class="hour-rain">0%</span>
+                </article>
+                <article class="hour-item">
+                    <span class="hour-time">15:00</span>
+                    <svg class="forecast-icon sunny"><use href="#icon-sun"></use></svg>
+                    <strong>25°</strong>
+                    <span class="hour-rain">0%</span>
+                </article>
+                <article class="hour-item">
+                    <span class="hour-time">16:00</span>
+                    <svg class="forecast-icon partly-cloudy"><use href="#icon-cloud-sun"></use></svg>
+                    <strong>23°</strong>
+                    <span class="hour-rain">10%</span>
+                </article>
+                <article class="hour-item">
+                    <span class="hour-time">17:00</span>
+                    <svg class="forecast-icon cloudy"><use href="#icon-cloud"></use></svg>
+                    <strong>21°</strong>
+                    <span class="hour-rain">20%</span>
+                </article>
+                <article class="hour-item">
+                    <span class="hour-time">18:00</span>
+                    <svg class="forecast-icon cloudy"><use href="#icon-cloud"></use></svg>
+                    <strong>19°</strong>
+                    <span class="hour-rain">20%</span>
+                </article>
+            </div>
+        </section>
+
+        <section class="forecast-card weekly-card" id="week">
+            <div class="section-heading">
+                <div>
+                    <p class="eyebrow">THE WEEK AHEAD</p>
+                    <h2>7-day forecast</h2>
+                </div>
+                <span class="section-caption">Daily outlook</span>
+            </div>
+
+            <div class="daily-list" id="daily-details">
+                <article class="day-row">
+                    <span class="day-name">Today</span>
+                    <svg class="forecast-icon partly-cloudy"><use href="#icon-cloud-sun"></use></svg>
+                    <span class="day-condition">Partly cloudy</span>
+                    <span class="day-rain">10%</span>
+                    <span class="temperature-range"><span>17°</span><strong>25°</strong></span>
+                </article>
+                <article class="day-row">
+                    <span class="day-name">Wednesday</span>
+                    <svg class="forecast-icon sunny"><use href="#icon-sun"></use></svg>
+                    <span class="day-condition">Mostly sunny</span>
+                    <span class="day-rain">0%</span>
+                    <span class="temperature-range"><span>16°</span><strong>26°</strong></span>
+                </article>
+                <article class="day-row">
+                    <span class="day-name">Thursday</span>
+                    <svg class="forecast-icon cloudy"><use href="#icon-cloud"></use></svg>
+                    <span class="day-condition">Cloudy</span>
+                    <span class="day-rain">20%</span>
+                    <span class="temperature-range"><span>17°</span><strong>24°</strong></span>
+                </article>
+                <article class="day-row">
+                    <span class="day-name">Friday</span>
+                    <svg class="forecast-icon rainy"><use href="#icon-cloud-rain"></use></svg>
+                    <span class="day-condition">Light rain</span>
+                    <span class="day-rain">60%</span>
+                    <span class="temperature-range"><span>16°</span><strong>22°</strong></span>
+                </article>
+                <article class="day-row">
+                    <span class="day-name">Saturday</span>
+                    <svg class="forecast-icon partly-cloudy"><use href="#icon-cloud-sun"></use></svg>
+                    <span class="day-condition">Partly cloudy</span>
+                    <span class="day-rain">10%</span>
+                    <span class="temperature-range"><span>17°</span><strong>24°</strong></span>
+                </article>
+            </div>
+        </section>
+
+        <footer class="page-footer">
+            <span>Made for clear skies and curious minds.</span>
+            <span>Weather data by <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a></span>
+        </footer>
+    </main>
+    <script src="{% static 'weather/app.js' %}"></script>
+
+</body>
+</html>
